@@ -72,7 +72,7 @@ class Config implements \ArrayAccess
 
     public function offsetGet($offset)
     {
-        $this->get($offset);
+        return $this->get($offset);
     }
 
     public function offsetSet($offset, $value)
@@ -87,6 +87,6 @@ class Config implements \ArrayAccess
 
     public function offsetExists($offset)
     {
-        $this->exists($offset);
+        return $this->exists($offset);
     }
 }

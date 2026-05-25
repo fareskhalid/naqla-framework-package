@@ -8,9 +8,9 @@ class View
     {
         $baseContent = self::getBaseContent();
 
-        $viewContent = self::getViewContent($view, params: $params);
+        $viewContent = self::getViewContent($view, isError: false, params: $params);
 
-        return (str_replace('{{content}}', $viewContent, $baseContent));
+        return str_replace('{{content}}', $viewContent, $baseContent);
     }
 
     protected static function getBaseContent()
@@ -24,7 +24,7 @@ class View
 
     public static function makeError($error)
     {
-        self::getViewContent($error, true);
+        self::getViewContent($error, isError: true);
     }
 
     protected static function getViewContent($view, $isError = false, $params = [])
@@ -48,12 +48,11 @@ class View
 
         if ($isError) {
             include $view;
-        } else {
-            ob_start();
-
-            include $view;
-
-            return ob_get_clean();
+            return;
         }
+
+        ob_start();
+        include $view;
+        return ob_get_clean();
     }
 }

@@ -18,7 +18,11 @@ class UniqueRule implements Rule
 
     public function apply($field, $value, $data =[])
     {
-        return !(app()->db->raw("SELECT * FROM {$this->table} WHERE {$this->column} = ?", [$value]));
+        $result = app()->db->raw(
+            "SELECT * FROM {$this->table} WHERE {$this->column} = ?",
+            [$value]
+        );
+        return empty($result);
     }
 
     public function __toString()

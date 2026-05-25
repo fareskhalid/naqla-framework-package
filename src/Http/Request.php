@@ -15,12 +15,17 @@ class Request
 
     public function method()
     {
-        return Str::lower($_SERVER['REQUEST_METHOD']);
+        return Str::lower($_SERVER['REQUEST_METHOD'] ?? 'GET');
+    }
+
+    public function isMethod($method)
+    {
+        return $this->method() === Str::lower($method);
     }
 
     public function all()
     {
-        return $_REQUEST;
+        return array_merge($_GET ?? [], $_POST ?? []);
     }
 
     public function only($keys)
@@ -28,8 +33,23 @@ class Request
         return Arr::only($this->all(), $keys);
     }
 
-    public function get($key)
+    public function except($keys)
     {
-        return Arr::get($this->all(), $key);
+        return Arr::except($this->all(), $keys);
+    }
+
+    public function get($key, $default = null)
+    {
+        return Arr::get($this->all(), $key, $default);
+    }
+
+    public function has($key)
+    {
+        return Arr::has($this->all(), [$key]);
+    }
+
+    public function input($key, $default = null)
+    {
+        return $this->get($key, $default);
     }
 }

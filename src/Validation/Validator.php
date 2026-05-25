@@ -14,14 +14,15 @@ class Validator
 
     protected ErrorBag $errorBag;
 
-    public function make($data)
+    public function make($data): self
     {
         $this->data = $data;
         $this->errorBag = new ErrorBag();
         $this->validate();
+        return $this;
     }
 
-    protected function validate()
+    protected function validate(): void
     {
         foreach ($this->rules as $field => $rules) {
             foreach (RulesResolver::make($rules) as $rule) {
@@ -30,7 +31,7 @@ class Validator
         }
     }
 
-    protected function applyRule($field, Rule $rule)
+    protected function applyRule($field, Rule $rule): void
     {
         if (!$rule->apply($field, $this->getFieldValue($field), $this->data)) {
             $this->errorBag->add($field, Message::generate($rule, $this->alias($field)));
@@ -42,28 +43,35 @@ class Validator
         return $this->data[$field] ?? null;
     }
 
-    public function setRules($rules)
+    public function setRules($rules): self
     {
         $this->rules = $rules;
+        return $this;
     }
 
-    public function passes()
+    public function passes(): bool
     {
         return empty($this->errors());
     }
 
-    public function errors($key = null)
+    public function fails(): bool
     {
-        return $key ? $this->errorBag->errors[$key] : $this->errorBag->errors;
+        return !$this->passes();
     }
 
-    public function alias($field)
+    public function errors($key = null): array
+    {
+        return $key ? ($this->errorBag->errors[$key] ?? []) : $this->errorBag->errors;
+    }
+
+    public function alias($field): string
     {
         return $this->aliases[$field] ?? $field;
     }
 
-    public function setAliases(array $aliases)
+    public function setAliases(array $aliases): self
     {
         $this->aliases = $aliases;
+        return $this;
     }
 }

@@ -78,7 +78,7 @@ class Arr
 
         foreach ($array as $key => $value) {
             if ($callback($value, $key)) {
-                return call_user_func($callback, $value, $key);
+                return $value;
             }
         }
 
@@ -157,21 +157,15 @@ class Arr
         }
 
         foreach ($keys as $key) {
-            // if the exact key exists in the top-level, remove it
             if (static::exists($array, $key)) {
                 unset($array[$key]);
-
                 continue;
             }
 
             $parts = explode('.', $key);
-
-            // clean up before each pass
             $array = &$original;
 
-            while (count($parts) > 1) {
-                $part = array_shift($parts);
-
+            foreach ($parts as $part) {
                 if (isset($array[$part]) && is_array($array[$part])) {
                     $array = &$array[$part];
                 } else {
@@ -179,7 +173,7 @@ class Arr
                 }
             }
 
-            unset($array[array_shift($parts)]);
+            unset($array[array_pop($parts)]);
         }
     }
 
@@ -197,7 +191,7 @@ class Arr
             return $array[$key];
         }
 
-        if (mb_strpos($key, '.') === false) {
+        if (!str_contains($key, '.')) {
             return $array[$key] ?? value($default);
         }
 
@@ -205,7 +199,7 @@ class Arr
             if (static::accessible($array) && static::exists($array, $segment)) {
                 $array = $array[$segment];
             } else {
-                return ($default);
+                return value($default);
             }
         }
 

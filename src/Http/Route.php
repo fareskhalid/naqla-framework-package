@@ -31,19 +31,19 @@ class Route
     {
         $path = $this->request->path();
         $method = $this->request->method();
-        $action = self::$routes[$method][$path] ?? false;
 
-        if (!array_key_exists($path, self::$routes[$method])) {
+        // Check if route exists
+        if (!isset(self::$routes[$method][$path])) {
             $this->response->setStatusCode(404);
             View::makeError('404');
-        }
-
-        if (!$action) {
             return;
         }
 
+        $action = self::$routes[$method][$path];
+
         if (is_callable($action)) {
             call_user_func_array($action, []);
+            return;
         }
 
         if (is_array($action)) {
@@ -51,6 +51,7 @@ class Route
             $method = $action[1];
 
             call_user_func_array([$controller, $method], []);
+            return;
         }
     }
 }

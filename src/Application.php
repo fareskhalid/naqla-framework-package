@@ -32,7 +32,7 @@ class Application
 
     protected function getDatabaseDriver()
     {
-         return match(env('DB_DRIVER')) {
+        return match(env('DB_DRIVER')) {
             'sqlite' => new SQLiteManager,
             'mysql' => new MySQLManager,
             default => new SQLiteManager
@@ -41,28 +41,41 @@ class Application
 
     protected function loadConfigurations()
     {
-        foreach(scandir(config_path()) as $file) {
-            if ($file == '.' || $file == '..') {
-                continue;
-            }
-            $filename = explode('.', $file)[0];
-
-            yield $filename => require config_path() . $file;
+        $configPath = config_path();
+        
+        if (!is_dir($configPath)) {
+            return [];
         }
 
+        $configs = [];
+        foreach (scandir($configPath) as $file) {
+            if ($file == '.' || $file == '..' || pathinfo($file, PATHINFO_EXTENSION) !== 'php') {
+                continue;
+            }
+            $filename = pathinfo($file, PATHINFO_FILENAME);
+            $configs[$filename] = require $configPath . $file;
+        }
+
+        return $configs;
     }
 
     public function run()
     {
-        $this->db->init();
-
-        $this->route->resolve();
+        try {
+            $this->db->init();
+            $this->route->resolve();
+        } catch (\Exception $e) {
+            $this->response->setStatusCode(500);
+            throw $e;
+        }
     }
 
     public function __get($name)
     {
-        if(property_exists($this, $name)) {
+        if (property_exists($this, $name)) {
             return $this->$name;
         }
+        
+        return null;
     }
 }

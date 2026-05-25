@@ -19,27 +19,27 @@ class DB
         ConnectsTo::connect($this->manager);
     }
 
-    protected function raw(string $query, $value = [])
+    public function raw(string $query, $value = [])
     {
         return $this->manager->query($query, $value);
     }
 
-    protected function create(array $data)
+    public function create(array $data)
     {
         return $this->manager->create($data);
     }
 
-    protected function delete($id)
+    public function delete($id)
     {
         return $this->manager->delete($id);
     }
 
-    protected function update($id, array $attributes)
+    public function update($id, array $attributes)
     {
         return $this->manager->update($id, $attributes);
     }
 
-    protected function read($columns = '*', $filter = null)
+    public function read($columns = '*', $filter = null)
     {
         return $this->manager->read($columns, $filter);
     }
