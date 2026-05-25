@@ -1,0 +1,24 @@
+{
+  "name": "naqla-sehia/naqla-framework",
+  "description": "A micro framework used by Naqla Sehia development team for PHP Back-end projects",
+  "authors": [
+    {
+      "name": "Fares Khalid",
+      "email": "fareskhalid791@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "App\\": "App",
+      "NaqlaSehia\\": "src"
+    }
+  },
+  "require": {
+    "phpmailer/phpmailer": "^6.5",
+    "symfony/var-dumper": "^5.2",
+    "vlucas/phpdotenv": "^5.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5"
+  }
+}
